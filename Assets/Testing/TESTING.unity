@@ -708,7 +708,7 @@ GameObject:
   - component: {fileID: 1994664463}
   - component: {fileID: 1994664462}
   m_Layer: 0
-  m_Name: FUCKFUCK
+  m_Name: TestSystem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
