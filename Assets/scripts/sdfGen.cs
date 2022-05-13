@@ -6,7 +6,7 @@ using UnityEngine.VFX.SDF;
 
 public class sdfGen : MonoBehaviour
 {
-    [SerializeField] irisSettings config;
+    [SerializeField] irisData config;
     [SerializeField] VisualEffect vfx;
     bool done = false;
     MeshToSDFBaker meshBaker;
@@ -14,15 +14,19 @@ public class sdfGen : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!done && config.mesh != null)
+        //GUARD PATTERN
+        if (done && config.mesh == null)
         {
-            print("Baking mesh");
-            meshBaker = new MeshToSDFBaker(config.sizeBox, config.center, config.maxResolution, config.mesh, config.signPassCount, config.threshold);
-            meshBaker.BakeSDF();
-            vfx.SetTexture("SDF", meshBaker.SdfTexture);
-            done = true;
-            print("Done");
+           return;
         }
+        
+        // Only executed when !done
+        print("Baking mesh");
+        meshBaker = new MeshToSDFBaker(config.sizeBox, config.center, config.maxResolution, config.mesh, config.signPassCount, config.threshold);
+        meshBaker.BakeSDF();
+        vfx.SetTexture("SDF", meshBaker.SdfTexture);
+        done = true;
+        print("Done");
     }
     void OnDestroy()
     {
@@ -32,3 +36,10 @@ public class sdfGen : MonoBehaviour
         }
     }
 }
+
+// ENUMS
+//SquareAnimation(Type, Color, ……..)
+
+// (FRACTURED) BROWNING MOTION
+// EXPO / LOG -> Verteilung
+// Distance based "Randbedingungen" bei kurzer Entfernung wenig oder viel veränderung vice versa

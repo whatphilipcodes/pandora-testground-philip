@@ -4,14 +4,28 @@ using UnityEngine;
 
 public class irisGen : MonoBehaviour
 {
-    [SerializeField] irisSettings config;
+    [SerializeField] irisData config;
+    List<Vector3> vertices = new List<Vector3>();
+    List<int> triangles = new List<int>();
 
     // Start is called before the first frame update
     void Start()
     {
-        List<Vector3> vertices = new List<Vector3>();
-        List<int> triangles = new List<int>();
+        CreateCube();
+        UploadMesh();
+    }
 
+    void UploadMesh()
+    {
+        Mesh mesh = new Mesh();
+        mesh.vertices = vertices.ToArray();
+        mesh.triangles = triangles.ToArray();
+        // load mesh into scriptable object
+        config.mesh = mesh;
+    }
+
+    void CreateCube ()
+    {
         // dummy cube
         vertices.Add(new Vector3(-1, -1, -1)); //0
         vertices.Add(new Vector3(-1, -1, 1)); //1
@@ -69,13 +83,5 @@ public class irisGen : MonoBehaviour
         triangles.Add(1);
         triangles.Add(0);
         triangles.Add(4);
-
-        Mesh mesh = new Mesh();
-        mesh.vertices = vertices.ToArray();
-        mesh.triangles = triangles.ToArray();
-
-        // load mesh into scriptable object
-        config.mesh = mesh;
-
     }
 }

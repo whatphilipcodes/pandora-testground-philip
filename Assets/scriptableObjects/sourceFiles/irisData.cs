@@ -4,8 +4,10 @@ using UnityEngine;
 
 [CreateAssetMenuAttribute(fileName = "IrisSettings", menuName = "Pandora Customs/IrisSettings", order = 1)]
 
-public class irisSettings : ScriptableObject
+public class irisData : ScriptableObject
 {
+    public int tube_resolution;
+    public float tube_radius;
     public Vector3 origin;
     public float radius, thickness;
     public int resolution;
