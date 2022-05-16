@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3ad35bd95c4e42fca441727f1abd693, type: 3}
   m_Name: IrisData
   m_EditorClassIdentifier: 
-  tube_resolution: 8
-  tube_radius: 4
+  tube_resolution: 64
+  tube_radius: 16
   origin: {x: 0, y: 0, z: 0}
   radius: 4
   thickness: 0.2

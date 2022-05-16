@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class irisGen : MonoBehaviour
 {
-    [SerializeField] irisData config;
+    [SerializeField] irisData iData;
     List<Vector3> vertices = new List<Vector3>();
     List<int> triangles = new List<int>();
 
@@ -21,7 +21,7 @@ public class irisGen : MonoBehaviour
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
         // load mesh into scriptable object
-        config.mesh = mesh;
+        iData.mesh = mesh;
     }
 
     void CreateCube ()

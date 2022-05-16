@@ -169,6 +169,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   iris_data: {fileID: 11400000, guid: d0627cf3f570d4784af8c731a2ff22a6, type: 2}
   debugRadius: 0.02
+  debug: 1
 --- !u!1 &970188218
 GameObject:
   m_ObjectHideFlags: 0
@@ -266,8 +267,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23c1ce4fb46143f46bc5cb5224c934f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clearColorMode: 0
-  backgroundColorHDR: {r: 0.025, g: 0.07, b: 0.19, a: 0}
+  clearColorMode: 1
+  backgroundColorHDR: {r: 0, g: 0, b: 0, a: 0}
   clearDepth: 1
   volumeLayerMask:
     serializedVersion: 2

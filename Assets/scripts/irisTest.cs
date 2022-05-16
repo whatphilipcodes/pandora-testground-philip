@@ -7,10 +7,13 @@ public class irisTest : MonoBehaviour
     // data input
     [SerializeField] irisData iris_data;
     [SerializeField] float debugRadius = 0.01f;
+    [SerializeField] bool debug = true;
+    [SerializeField] Mesh mesh;
 
+    /*
     private void OnDrawGizmos()
     {
-        List<Vector3> vertices = ReturnCircle(iris_data.center, 1f, 8);
+        List<Vector3> vertices = ReturnCircle(new Vector3(0,0,0), 1f, 8);
         vertices.AddRange(ReturnCircle(new Vector3(0,0,4), 1f, 16));
 
         Gizmos.color = Color.red;
@@ -18,6 +21,24 @@ public class irisTest : MonoBehaviour
         {
             Gizmos.DrawWireCube(vertices[i], new Vector3(debugRadius,debugRadius,debugRadius));
         }
+    }
+    */
+
+    void Update()
+    {
+        Vector3 pos01 = new Vector3(0, 0, 0);
+        Vector3 pos02 = new Vector3(0, 0, 4);
+        mesh = TubeSegment(pos01, pos02);
+
+        /*
+        if (debug == true)
+        {
+            for (int i = 0; i < vertices.Count; i++)
+            {
+                Debug.DrawLine(vertices[i], vertices[(i + 1) % vertices.Count], Color.red);
+            }
+        }
+        */
     }
 
     // Custom Functions
@@ -28,25 +49,43 @@ public class irisTest : MonoBehaviour
         float step = 2 * Mathf.PI / resolution;
         for (int i = 0; i < resolution; i++)
         {
-            circle.Add(new Vector3(position.x + radius * Mathf.Cos(angle), position.y + radius * Mathf.Sin(angle), 0));
+            circle.Add(new Vector3(position.x + radius * Mathf.Cos(angle), position.y + radius * Mathf.Sin(angle), position.z));
             angle += step;
         }
         return circle;
     }
 
-    Mesh TubeSegment()
+    Mesh TubeSegment(Vector3 start, Vector3 end)
     {
         Mesh mesh = new Mesh();
         List<Vector3> vertices = new List<Vector3>();
         List<int> triangles = new List<int>();
-
-        Vector3 position = Vector3.zero;
-        Vector3 position2 = new Vector3 (0,0,1);
         
-        vertices.AddRange(ReturnCircle(position, iris_data.tube_radius, iris_data.tube_resolution));
-        vertices.AddRange(ReturnCircle(position, iris_data.tube_radius, iris_data.tube_resolution));
+        vertices.AddRange(ReturnCircle(start, iris_data.tube_radius, iris_data.tube_resolution));
+        vertices.AddRange(ReturnCircle(end, iris_data.tube_radius, iris_data.tube_resolution));
+
+        triangles = TubeSegmentTriangles(iris_data.tube_resolution);
+
+        mesh.vertices = vertices.ToArray();
+        mesh.triangles = triangles.ToArray();
 
         return mesh;
+    }
+
+    List<int> TubeSegmentTriangles(int resolution)
+    {
+        List<int> triangles = new List<int>();
+        for (int i = 0; i < resolution; i++)
+        {
+            triangles.Add(i);
+            triangles.Add((i + 1) % resolution);
+            triangles.Add(i + resolution);
+
+            triangles.Add(i + resolution);
+            triangles.Add((i + 1) % resolution);
+            triangles.Add((i + 1) % resolution + resolution);
+        }
+        return triangles;
     }
 
     void UploadMesh(Mesh mesh)
