@@ -13,7 +13,6 @@ public class irisData : ScriptableObject
     public int resolution;
     [Range (0, 1)] public float noiseAmount;
     public Mesh mesh;
-
     public int maxResolution = 64;
     public Vector3 center;
     public Vector3 sizeBox;
