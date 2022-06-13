@@ -1,3 +1,3 @@
 # pandora
 
-work in progress
+this repo is for testing only
