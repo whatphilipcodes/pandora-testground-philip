@@ -2,20 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenuAttribute(fileName = "IrisSettings", menuName = "Pandora Customs/IrisSettings", order = 1)]
+[CreateAssetMenuAttribute(fileName = "IrisData", menuName = "Pandora Customs/IrisData", order = 1)]
 
-public class irisData : ScriptableObject
+public class IrisData : ScriptableObject
 {
-    public int tube_resolution;
-    public float tube_radius;
+    // Generation Settings
     public Vector3 origin;
-    public float radius, thickness;
-    public int resolution;
-    [Range (0, 1)] public float noiseAmount;
-    public Mesh mesh;
-    public int maxResolution = 64;
-    public Vector3 center;
-    public Vector3 sizeBox;
-    public int signPassCount = 1;
-    public float threshold = 0.5f;
+    public float totalRadius;
+    public int maxSegmentResolution;
+    public Gradient stageDistribution;
+
+    // SDF Settings
+    [HideInInspector] public int maxResolution = 64, signPassCount = 1;
+    [HideInInspector] public Vector3 center, sizeBox;
+    [HideInInspector] public float threshold = 0.5f;
+
+    // VFX Data
+    public Texture3D SDF;
 }
