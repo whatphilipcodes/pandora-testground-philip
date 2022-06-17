@@ -8,8 +8,8 @@ public class IrisData : ScriptableObject
 {
     // Generation Settings
     public Vector3 origin;
-    public float totalRadius;
-    public int maxSegmentResolution;
+    public float totalRadius, maxPointRadius, displacementLimit;
+    public int maxPointsPerRadius, radialSteps, numInitPoints;
     public Gradient stageDistribution;
 
     // SDF Settings

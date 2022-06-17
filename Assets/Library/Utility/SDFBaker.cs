@@ -19,7 +19,8 @@ public class SDFBaker : MonoBehaviour
             config.threshold
         );
 
-        RenderTexture sdf = meshBaker.SdfTexture;
+        meshBaker.BakeSDF();
+        RenderTexture sdf = new RenderTexture(meshBaker.SdfTexture);
 
         if (meshBaker != null)
         {

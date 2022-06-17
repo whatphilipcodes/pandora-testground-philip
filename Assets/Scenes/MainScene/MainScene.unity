@@ -531,7 +531,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1326530128}
-  - component: {fileID: 1326530127}
   m_Layer: 0
   m_Name: irisGen
   m_TagString: Untagged
@@ -539,18 +538,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1326530127
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1326530126}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e7e55c10479b409b9c65afbf43a3bb1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &1326530128
 Transform:
   m_ObjectHideFlags: 0
@@ -989,6 +976,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcd9c78814bf745a6899141a79f50d2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  irisData: {fileID: 11400000, guid: f7391a7b3db3447988e4460fe6717f8b, type: 2}
+  debug: 0
 --- !u!1 &2134295925
 GameObject:
   m_ObjectHideFlags: 0

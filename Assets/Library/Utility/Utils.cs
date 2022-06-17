@@ -17,5 +17,17 @@ namespace PandoraUtils
             );
             return vec;
         }
+
+        public static Vector3 RandomCircleCoordinate (float radius)
+        {
+            float angle = Random.Range(0f,360f);
+            Vector3 vec = new Vector3
+            (
+                Mathf.Cos(angle) * radius,
+                Mathf.Sin(angle) * radius,
+                0
+            );
+            return vec;
+        }
     }
 }
