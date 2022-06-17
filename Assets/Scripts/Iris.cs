@@ -55,7 +55,6 @@ public class Iris
     public void CirclePoints()
     {
 
-
     }
 
     public class IRPath
