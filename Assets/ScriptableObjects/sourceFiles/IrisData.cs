@@ -8,9 +8,9 @@ public class IrisData : ScriptableObject
 {
     // Generation Settings
     public Vector3 origin;
-    public float totalRadius, maxPointRadius, displacementLimit;
-    public int maxPointsPerRadius, radialSteps, numInitPoints;
-    public Gradient stageDistribution;
+    public float totalRadius, displacementLimit, maxCylinderRadius;
+    public int radialSteps, minStepResolution, maxStepResolution;
+    public Gradient weightDistribution;
 
     // SDF Settings
     [HideInInspector] public int maxResolution = 64, signPassCount = 1;

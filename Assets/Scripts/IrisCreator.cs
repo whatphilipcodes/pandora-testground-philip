@@ -13,42 +13,27 @@ public class IrisCreator : MonoBehaviour
     [HideInInspector]
     Iris iris;
 
-    // Debugging
-    List<Vector3> testPoints;
-    int counter = 0;
-
 
     // Start is called before the first frame update
     void Start()
     {
-
         // Create Iris
         iris = new Iris(irisData);
 
         // Debugging
         if (!debug) return;
-
-        testPoints = new List<Vector3>();
-        for (int i = 0; i < 10; i++)
-        {
-            testPoints.Add(util.RandomVector(2));
-        }
     }
 
     // Update is called once per frame
     void Update()
-    {
+    {/*
         // Manage Iris
-        iris.Extrude();
-        iris.DebugDraw();
+        iris.Expand();
 
         // Debugging
         if (!debug) return;
-
-        for (int i = 0; i < testPoints.Count; i++)
-        {
-            Debug.DrawLine(irisData.origin, testPoints[i], Color.white);
-        }
+        iris.DebugDraw();
+        */
     }
 
     VertexPath ReturnSmooth(Vector3[] points)
