@@ -687,6 +687,7 @@ GameObject:
   - component: {fileID: 1823688466}
   - component: {fileID: 1823688465}
   - component: {fileID: 1823688468}
+  - component: {fileID: 1823688469}
   m_Layer: 0
   m_Name: masterCamera
   m_TagString: MainCamera
@@ -884,6 +885,20 @@ MonoBehaviour:
       enableFptlForForwardOpaque: 0
       enableBigTilePrepass: 0
       isFptlEnabled: 0
+--- !u!114 &1823688469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1823688464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88bce581fd1b543428f37eaecfd4f322, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  folder: /Users/philip/desktop
+  resolutionFactor: 0
 --- !u!1 &2013410473
 GameObject:
   m_ObjectHideFlags: 1
@@ -977,7 +992,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   irisData: {fileID: 11400000, guid: f7391a7b3db3447988e4460fe6717f8b, type: 2}
-  debug: 0
+  debug: 1
 --- !u!1 &2134295925
 GameObject:
   m_ObjectHideFlags: 0

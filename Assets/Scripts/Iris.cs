@@ -4,16 +4,16 @@ using UnityEngine;
 
 using PandoraUtils;
 
-
 public class Iris
 {
     #region Fields
 
     static IrisData irisData;
-    //int circleID;
+    int circleID;
     float stepSize;
     float radialStep;
-    List<IRPath> paths;
+    List<IRPath> pathsAlive;
+    List<IRPath> pathsDead;
 
     #endregion
 
@@ -23,9 +23,11 @@ public class Iris
     {
         irisData = _irisData;
         stepSize = irisData.totalRadius / irisData.radialSteps;
-        //circleID = 0;
+        circleID = 0;
         radialStep = 0;
-        paths = new List<IRPath>();
+        pathsAlive = new List<IRPath>();
+        pathsDead = new List<IRPath>();
+        Debug.Log("Iris created!");
     }
 
     #endregion
@@ -34,19 +36,39 @@ public class Iris
 
     public void Iterate()
     {
-        foreach (var IRPath in paths)
+        if (radialStep >= irisData.totalRadius) return;
+        int pointsAmount = GetPointsAmount(radialStep);
+        ManagePaths(pointsAmount);
+        Vector3[] points = DistributePoints(pointsAmount);
+        int i = 0;
+
+        foreach (var IRPath in pathsAlive)
         {
-            IRPath.AddPoints(DistributePoints());
+            IRPath.AddPoint(points[i], circleID);
+            i++;
+        }
+
+        radialStep += stepSize;
+        circleID++;
+    }
+
+    public void DebugDraw()
+    {
+        foreach (var IRPath in pathsAlive)
+        {
+            IRPath.DebugDraw();
+        }
+        foreach (var IRPath in pathsDead)
+        {
+            IRPath.DebugDraw();
         }
     }
 
     #endregion
 
     #region Internal Methods
-
-    internal Vector3[] DistributePoints()
+    internal Vector3[] DistributePoints(int pointsAmount)
     {
-        int pointsAmount = GetPointsAmount(radialStep);
         if (pointsAmount == 0) return null;
 
         Vector3[] points = new Vector3[pointsAmount];
@@ -61,6 +83,17 @@ public class Iris
         }
 
         return points;
+    }
+
+    internal int CountPathsAlive()
+    {
+        int count = 0;
+        foreach (var IRPath in pathsAlive)
+        {
+            bool checker = IRPath.PathAlive();
+            if (checker) count++;
+        }
+        return count;
     }
 
     internal int GetPointsAmount(float radius)
@@ -78,6 +111,21 @@ public class Iris
         return v;
     }
 
+    internal void ManagePaths(int pointsAmount)
+    {
+        int pathsAmountAlive = CountPathsAlive();
+        if (pathsAmountAlive == pointsAmount)
+        {
+            return;
+        } else if (pathsAmountAlive > pointsAmount) {
+            int toKill = pointsAmount - pathsAmountAlive;
+            pathsAlive.Remove();
+            pathsDead.Add();
+        } else {
+            pathsAlive.Add();
+        }
+    }
+
     #endregion
 
     #region Subclasses and Helpers
@@ -91,9 +139,16 @@ public class Iris
 
         struct IRPoint
         {
-            int circleID;
-            float cylRadius;
-            Vector3 position;
+            public int circleID;
+            public float cylRadius;
+            public Vector3 position;
+
+            public IRPoint (Vector3 _pos, int _cID)
+            {
+                this.circleID = _cID;
+                this.position = _pos;
+                this.cylRadius = 0;
+            }
         }
 
         List<IRPoint> points;
@@ -106,23 +161,45 @@ public class Iris
         {
             alive = true;
             points = new List<IRPoint>();
-            Initialize();
         }
 
         #endregion
 
         #region Methods
 
-        void Initialize()
+        internal void AddPoint(Vector3 point, int circleID)
         {
+            if (point == null)
+            {
+                Debug.Log("AddPoint received empty Vector.");
+                return;
+            }
 
+            points.Add(new IRPoint(point, circleID));
         }
 
-        internal void AddPoints(Vector3[] points)
+        internal bool PathAlive()
         {
-            if (points == null) return;
+            if (alive == true)
+            {
+                return true;
+            } else {
+                return false;
+            }
+        }
 
+        internal void KillPath()
+        {
+            alive = false;
+        }
 
+        internal void DebugDraw()
+        {
+            for (int i = 0; i < points.Count - 1; i++)
+            {
+                Debug.DrawLine(points[i].position, points[i + 1].position, Color.white);
+            }
+            Debug.Log("Drawn!");
         }
 
         #endregion
@@ -130,7 +207,6 @@ public class Iris
     }
     #endregion
 }
-
 
 /*
 public class Iris

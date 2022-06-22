@@ -26,14 +26,13 @@ public class IrisCreator : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {/*
+    {
         // Manage Iris
-        iris.Expand();
+        iris.Iterate();
 
         // Debugging
         if (!debug) return;
         iris.DebugDraw();
-        */
     }
 
     VertexPath ReturnSmooth(Vector3[] points)
