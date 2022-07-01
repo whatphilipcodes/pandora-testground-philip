@@ -6,8 +6,8 @@ public class irisTest : MonoBehaviour
 {
     // data input
     [SerializeField] testData iris_data;
-    [SerializeField] float debugRadius = 0.01f;
-    [SerializeField] bool debug = true;
+    //[SerializeField] float debugRadius = 0.01f;
+    //[SerializeField] bool debug = true;
     [SerializeField] Mesh mesh;
 
     /*

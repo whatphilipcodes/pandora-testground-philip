@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: IrisData
   m_EditorClassIdentifier: 
   origin: {x: 0, y: 0, z: 0}
-  totalRadius: 10
-  displacementLimit: 0.02
+  totalRadius: 1
+  displacementLimit: 0.005
   maxCylinderRadius: 0
   radialSteps: 300
-  minStepResolution: 10
-  maxStepResolution: 20
+  minStepResolution: 200
+  maxStepResolution: 400
   weightDistribution:
     serializedVersion: 2
     key0: {r: 0, g: 0, b: 0, a: 1}
@@ -29,11 +29,11 @@ MonoBehaviour:
     key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 8481
-    ctime1: 13107
-    ctime2: 31611
-    ctime3: 64957
-    ctime4: 64957
+    ctime0: 12529
+    ctime1: 15613
+    ctime2: 37008
+    ctime3: 65535
+    ctime4: 65535
     ctime5: 0
     ctime6: 0
     ctime7: 0

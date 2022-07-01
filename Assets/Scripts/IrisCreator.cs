@@ -18,7 +18,7 @@ public class IrisCreator : MonoBehaviour
     void Start()
     {
         // Create Iris
-        iris = new Iris(irisData);
+        iris = new Iris(irisData, debug);
 
         // Debugging
         if (!debug) return;
@@ -28,7 +28,7 @@ public class IrisCreator : MonoBehaviour
     void Update()
     {
         // Manage Iris
-        iris.Iterate();
+        iris.Update();
 
         // Debugging
         if (!debug) return;

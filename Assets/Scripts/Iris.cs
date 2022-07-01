@@ -6,179 +6,180 @@ using PandoraUtils;
 
 public class Iris
 {
-    #region Fields
+    #region Properties
+    IrisData irisData;
+    bool running, debug;
 
-    static IrisData irisData;
-    int circleID;
-    float stepSize;
-    float radialStep;
-    List<IRPath> pathsAlive;
-    List<IRPath> pathsDead;
+    float step, currentStep, currentGrad;
+    int stepNo, pointBudget;
 
+    List<IRPath> allPaths;
+    List<int> alivePaths;
     #endregion
 
     #region Constructor
-
-    public Iris(IrisData _irisData)
+    public Iris(IrisData _irisData, bool debugMode)
     {
         irisData = _irisData;
-        stepSize = irisData.totalRadius / irisData.radialSteps;
-        circleID = 0;
-        radialStep = 0;
-        pathsAlive = new List<IRPath>();
-        pathsDead = new List<IRPath>();
-        Debug.Log("Iris created!");
-    }
+        debug = debugMode;
+        running = true;
 
+        stepNo = 0;
+        currentStep = 0;
+        currentGrad = 0;
+        step = irisData.totalRadius / irisData.radialSteps;
+
+        allPaths = new List<IRPath>();
+
+        // Debugging
+        if (debug) Debug.Log("Iris created!");
+    }
     #endregion
 
     #region Public Access
-
-    public void Iterate()
+    public void Update()
     {
-        if (radialStep >= irisData.totalRadius) return;
-        int pointsAmount = GetPointsAmount(radialStep);
-        ManagePaths(pointsAmount);
-        Vector3[] points = DistributePoints(pointsAmount);
-        int i = 0;
-
-        foreach (var IRPath in pathsAlive)
+        // GUARD PATTERN to stop execution upon completion
+        if (stepNo == irisData.radialSteps)
         {
-            IRPath.AddPoint(points[i], circleID);
-            i++;
+            if (debug && running)
+            {
+                running = false;
+                Debug.Log("iris compledted.");
+            }
+            return;
         }
 
-        radialStep += stepSize;
-        circleID++;
+        // CYCLE SETUP
+        // Determine step of the current cycle
+        currentStep = stepNo * step;
+        // Determine gradient factor by sampling
+        currentGrad = SampleGradient(currentStep);
+        // Determine cycles point budget
+        pointBudget = GetPointsBudget(currentGrad);
+        // Retrieve IDs of alive paths
+        alivePaths = GetAlivePaths();
+        // Calculate how many points to spawn / kill
+        int diffToPrev = pointBudget - alivePaths.Count;
+
+        // PATH MANAGEMENT
+        ManagePaths(diffToPrev);
+
+        // EXTRUDE alive paths older than 1 cycle
+        foreach (var id in alivePaths)
+        {
+            allPaths[id].Extrude(irisData, step, currentStep);
+        }
+
+        // DEBUGGING information is collected and displayed
+        if (debug) Debug.Log(
+            "CYCLE NO." + stepNo + "\n" +
+            "currentStep = " + currentStep + "\n"
+        );
+
+        // COMPLETE CYCLE by calculationg next step number
+        stepNo++;
     }
 
     public void DebugDraw()
     {
-        foreach (var IRPath in pathsAlive)
+        foreach (var path in allPaths)
         {
-            IRPath.DebugDraw();
-        }
-        foreach (var IRPath in pathsDead)
-        {
-            IRPath.DebugDraw();
+            path.DebugDraw();
         }
     }
-
     #endregion
 
     #region Internal Methods
-    internal Vector3[] DistributePoints(int pointsAmount)
-    {
-        if (pointsAmount == 0) return null;
-
-        Vector3[] points = new Vector3[pointsAmount];
-
-        for (int i = 0; i < pointsAmount; i++)
-        {
-            float angleStep = 360 / pointsAmount;
-            float random = Random.Range(-angleStep, angleStep);
-            float theta = i * angleStep + random;
-
-            points[i] = util.CircleCoordinate(radialStep, theta);
-        }
-
-        return points;
-    }
-
-    internal int CountPathsAlive()
-    {
-        int count = 0;
-        foreach (var IRPath in pathsAlive)
-        {
-            bool checker = IRPath.PathAlive();
-            if (checker) count++;
-        }
-        return count;
-    }
-
-    internal int GetPointsAmount(float radius)
-    {
-        float weight = SampleDistributionGradient(radius);
-        int amount = Random.Range((int)(irisData.minStepResolution * weight),(int)((irisData.maxStepResolution + 1) * weight));
-        // + 1 since when using Random.Range on int the upper range changes into an exclusive
-        return amount;
-    }
-
-    internal float SampleDistributionGradient(float t)
+    private float SampleGradient(float t)
     {
         Color sampleGradient = irisData.weightDistribution.Evaluate(t);
         Color.RGBToHSV(sampleGradient, out float h, out float s, out float v);
         return v;
     }
 
-    internal void ManagePaths(int pointsAmount)
+    private int GetPointsBudget(float weight)
     {
-        int pathsAmountAlive = CountPathsAlive();
-        if (pathsAmountAlive == pointsAmount)
-        {
-            return;
-        } else if (pathsAmountAlive > pointsAmount) {
-            int toKill = pointsAmount - pathsAmountAlive;
-            pathsAlive.Remove();
-            pathsDead.Add();
-        } else {
-            pathsAlive.Add();
-        }
+        int amount = Random.Range((int)(irisData.minStepResolution * weight),(int)((irisData.maxStepResolution + 1) * weight));
+        // + 1 since when using Random.Range as int the upper range changes into an exclusive
+        return amount;
     }
 
+    private List<int> GetAlivePaths()
+    {
+        List<int> alive = new List<int>();
+
+        int i = 0;
+        foreach (var path in allPaths)
+        {
+            if (path.IsAlive()) alive.Add(i);
+            i++;
+        }
+        return alive;
+    }
+
+    private void ManagePaths(int diffToPrev)
+    {
+        if (diffToPrev == 0)
+                {
+                    return;
+                }
+                else if (diffToPrev < 0)
+                {
+                    diffToPrev = -diffToPrev;
+                    List<int> prey = util.RandomIDs(diffToPrev, alivePaths);
+
+                    foreach (var id in prey)
+                    {
+                        allPaths[id].Kill();
+                        alivePaths.Remove(id);
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < diffToPrev; i++)
+                    {
+                        allPaths.Add(new IRPath(currentStep));
+                    }
+                }
+    }
     #endregion
 
-    #region Subclasses and Helpers
-
-    class IRPath
+    #region Subclasses and Structs
+    public class IRPath
     {
-        #region Fields
-
-        int pathID;
-        bool alive;
-
-        struct IRPoint
-        {
-            public int circleID;
-            public float cylRadius;
-            public Vector3 position;
-
-            public IRPoint (Vector3 _pos, int _cID)
-            {
-                this.circleID = _cID;
-                this.position = _pos;
-                this.cylRadius = 0;
-            }
-        }
-
-        List<IRPoint> points;
-
+        #region Properties
+        private bool alive;
+        private List<IRPoint> points;
         #endregion
 
         #region Constructor
-
-        IRPath()
+        public IRPath(float radius)
         {
             alive = true;
             points = new List<IRPoint>();
+            AddPoint(radius);
         }
-
         #endregion
 
-        #region Methods
-
-        internal void AddPoint(Vector3 point, int circleID)
+        #region Public Access
+        public void AddPoint(float radius)
         {
-            if (point == null)
-            {
-                Debug.Log("AddPoint received empty Vector.");
-                return;
-            }
-
-            points.Add(new IRPoint(point, circleID));
+            IRPoint point = CreatePoint(radius);
+            Debug.Log("point: " + point.position + " | " + point.step);
+            points.Add(point);
         }
 
-        internal bool PathAlive()
+        internal void Extrude(IrisData irisData, float step, float currentStep)
+        {
+            Vector3 position =  points[points.Count - 1].position;
+            Vector3 displacement = (position - irisData.origin).normalized * step;
+            displacement += util.RandomVector2D(irisData.displacementLimit);
+            IRPoint point = new IRPoint ( position + displacement, currentStep );
+            points.Add(point);
+        }
+
+        public bool IsAlive()
         {
             if (alive == true)
             {
@@ -188,162 +189,9 @@ public class Iris
             }
         }
 
-        internal void KillPath()
+        public void Kill()
         {
             alive = false;
-        }
-
-        internal void DebugDraw()
-        {
-            for (int i = 0; i < points.Count - 1; i++)
-            {
-                Debug.DrawLine(points[i].position, points[i + 1].position, Color.white);
-            }
-            Debug.Log("Drawn!");
-        }
-
-        #endregion
-
-    }
-    #endregion
-}
-
-/*
-public class Iris
-{
-    #region Fields
-
-    // properties
-    List<IRPath> paths;
-    public int circleID;
-
-    //statics
-    static IrisData irisData;
-
-    #endregion
-
-    #region Constructors
-
-    /// <summary>Iris object used to manage processes for creation of a unique iris mesh.</summary>
-
-    // cunstructor
-    public Iris(IrisData _irisData)
-    {
-        circleID = 0;
-        irisData = _irisData;
-        paths = new List<IRPath>();
-        Initialize();
-    }
-
-    #endregion
-
-    #region Methods
-
-    // methods
-    public void Initialize()
-    {
-        for (int i = 0; i < irisData.numInitPoints; i++)
-        {
-            paths.Add(new IRPath());
-        }
-    }
-
-    public void Expand()
-    {
-        foreach (var IRPath in paths)
-        {
-            IRPath.Extrude(circleID);
-        }
-        circleID += 1;
-    }
-
-    public void DebugDraw()
-    {
-        foreach (IRPath IRPath in paths)
-        {
-            IRPath.DebugDraw();
-        }
-    }
-
-    
-    public List<IRPoint> GetNeighbors(int circleID)
-    {
-        List<IRPoint> results = new List<IRPoint>(); 
-        foreach (var IRPath in paths)
-        {
-            results.Add(IRPath.GetPoint(circleID));
-        }
-        return results;
-    }
-    
-
-    #endregion
-
-    #region  Helper - Classes and Structs
-
-    public class IRPath
-    {
-        #region Fields
-
-        // properties
-        List<IRPoint> points;
-        bool alive;
-        int pathID;
-        float step;
-        float currentRadius;
-
-        // statics
-        static int pathCount;
-
-        #endregion
-
-        #region Constructors
-
-        /// <summary>An IrisPath consists of a list of IRPoints.</summary>
-        /// <param name="start"> A startpoint is required for instantiation.</param>
-
-        // constructor
-        public IRPath()
-        {
-            alive = true;
-            pathID = pathCount;
-            step = irisData.totalRadius / irisData.radialSteps;
-            points = new List<IRPoint>();
-            AddPoint(util.RandomCircleCoordinate(2), 0);
-            pathCount++;
-        }
-
-        #endregion
-
-        #region Methods
-        // methods
-
-        /// <summary>Adds a point to the IRPath.</summary>
-        /// <param name="point">Vector 3 to be added.</param>
-        void AddPoint(Vector3 point, int id)
-        {
-            points.Add(new IRPoint(point, id));
-        }
-
-        
-        public IRPoint GetPoint(int pointID)
-        {
-            return points[pointID];
-        }
-
-        /// <summary>Disables IRPath executed on.</summary>
-        void Kill()
-        {
-            alive = false;
-        }
-        
-        public void Extrude(int circleID)
-        {
-            Vector3 position =  points[points.Count - 1].position;
-            Vector3 displacement = (position - irisData.origin).normalized * step;
-            displacement += util.RandomVector(irisData.displacementLimit);
-            AddPoint(position + displacement, circleID);
-            currentRadius += step;
         }
 
         public void DebugDraw()
@@ -353,55 +201,28 @@ public class Iris
                 Debug.DrawLine(points[i].position, points[i + 1].position, Color.white);
             }
         }
+        #endregion
 
+        #region Internal Methods
+
+        private IRPoint CreatePoint(float radius)
+        {
+            Vector3 pos = util.RandomCircleCoordinate(radius);
+            return new IRPoint (pos, radius);
+        }
         #endregion
     }
 
-    public class IRPoint
+    private struct IRPoint
     {
-        #region Fields
+        internal float step;
+        internal Vector3 position;
 
-        public Vector3 position;
-        public float radius;
-        public int circleID;
-
-        #endregion
-
-        #region Statics
-
-        static int pointCount;
-
-        #endregion
-
-        #region Constructor
-
-        /// <summary>An IrisPoint consists of a position (Vector3), radius (float) and ID (int). </summary>
-        public IRPoint (Vector3 _pos, int _circleID)
+        internal IRPoint (Vector3 _pos, float _step)
         {
-            position = _pos;
-            radius = GetRadius(_pos);
-            circleID = _circleID;
-            pointCount++;
+            this.position = _pos;
+            this.step = _step;
         }
-
-        #endregion
-
-        #region Methods
-
-        /// <summary>Returns radius based on distribution gradient.</summary>
-        float GetRadius(Vector3 point)
-        {
-            //Debug.Log("Radius");
-            float distToOrigin = Vector3.Distance(point, irisData.origin);
-            Color sampleGradient = irisData.stageDistribution.Evaluate(distToOrigin);
-            Color.RGBToHSV(sampleGradient, out float h, out float s, out float v);
-            float radius = v * irisData.maxPointRadius;
-            return radius;
-        }
-
-        #endregion
     }
-
     #endregion
 }
-*/
