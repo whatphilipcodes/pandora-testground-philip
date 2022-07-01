@@ -8,7 +8,9 @@ public class IrisData : ScriptableObject
 {
     // Generation Settings
     public Vector3 origin;
-    public float totalRadius, displacementLimit, maxCylinderRadius;
+    public float totalRadius, maxCylinderRadius;
+    [Range(0f,0.005f)] public float displacementLimit;
+    [Range(0f,0.1f)] public float depthFactor;
     public int radialSteps, minStepResolution, maxStepResolution;
     public Gradient weightDistribution;
 

@@ -7,7 +7,7 @@ using PandoraUtils;
 public class Iris
 {
     #region Properties
-    IrisData irisData;
+    static IrisData irisData;
     bool running, debug;
 
     float step, currentStep, currentGrad;
@@ -91,8 +91,9 @@ public class Iris
     #endregion
 
     #region Internal Methods
-    private float SampleGradient(float t)
+    private float SampleGradient(float radius)
     {
+        float t = radius / irisData.totalRadius;
         Color sampleGradient = irisData.weightDistribution.Evaluate(t);
         Color.RGBToHSV(sampleGradient, out float h, out float s, out float v);
         return v;
@@ -121,27 +122,27 @@ public class Iris
     private void ManagePaths(int diffToPrev)
     {
         if (diffToPrev == 0)
-                {
-                    return;
-                }
-                else if (diffToPrev < 0)
-                {
-                    diffToPrev = -diffToPrev;
-                    List<int> prey = util.RandomIDs(diffToPrev, alivePaths);
+        {
+            return;
+        }
+        else if (diffToPrev < 0)
+        {
+            diffToPrev = -diffToPrev;
+            List<int> prey = util.RandomIDs(diffToPrev, alivePaths);
 
-                    foreach (var id in prey)
-                    {
-                        allPaths[id].Kill();
-                        alivePaths.Remove(id);
-                    }
-                }
-                else
-                {
-                    for (int i = 0; i < diffToPrev; i++)
-                    {
-                        allPaths.Add(new IRPath(currentStep));
-                    }
-                }
+            foreach (var id in prey)
+            {
+                allPaths[id].Kill();
+                alivePaths.Remove(id);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < diffToPrev; i++)
+            {
+                allPaths.Add(new IRPath(currentStep));
+            }
+        }
     }
     #endregion
 
@@ -165,17 +166,19 @@ public class Iris
         #region Public Access
         public void AddPoint(float radius)
         {
-            IRPoint point = CreatePoint(radius);
+            IRPoint point = CreateRandomPoint(radius);
             Debug.Log("point: " + point.position + " | " + point.step);
             points.Add(point);
         }
 
-        internal void Extrude(IrisData irisData, float step, float currentStep)
+        public void Extrude(IrisData irisData, float step, float currentStep)
         {
             Vector3 position =  points[points.Count - 1].position;
             Vector3 displacement = (position - irisData.origin).normalized * step;
             displacement += util.RandomVector2D(irisData.displacementLimit);
-            IRPoint point = new IRPoint ( position + displacement, currentStep );
+            Vector3 result = position + displacement;
+            result.z = GetDepthCoord(currentStep);
+            IRPoint point = new IRPoint ( result, currentStep );
             points.Add(point);
         }
 
@@ -204,11 +207,19 @@ public class Iris
         #endregion
 
         #region Internal Methods
-
-        private IRPoint CreatePoint(float radius)
+        private IRPoint CreateRandomPoint(float radius)
         {
             Vector3 pos = util.RandomCircleCoordinate(radius);
+            pos.z = GetDepthCoord(radius);
             return new IRPoint (pos, radius);
+        }
+        
+        private float GetDepthCoord (float radius)
+        {
+            float t = radius / irisData.totalRadius;
+            Color sampleGradient = irisData.weightDistribution.Evaluate(t);
+            Color.RGBToHSV(sampleGradient, out float h, out float s, out float v);
+            return v * irisData.depthFactor;
         }
         #endregion
     }

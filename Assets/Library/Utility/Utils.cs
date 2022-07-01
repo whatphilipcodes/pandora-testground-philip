@@ -64,24 +64,5 @@ namespace PandoraUtils
             }
             return result;
         }
-
-        /*
-        public List<int> RandomList(int fromInclusive, int toExclusive, int count)
-        {
-            List<int> available = new List<int>();
-            List<int> result = new List<int>();
-            for (int i = 0;i < count;i++)
-            {
-                if (available.Count == 0)
-                {
-                    for (int index = fromInclusive;index < toExclusive;index++) available.Add(index);
-                }
-                int selected = available[Random.Range(0, available.Count)];
-                available.Remove(selected);
-                result.Add(selected);
-            }
-            return result;
-        }
-        */
     }
 }

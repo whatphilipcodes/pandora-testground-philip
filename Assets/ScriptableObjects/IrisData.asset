@@ -14,24 +14,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   origin: {x: 0, y: 0, z: 0}
   totalRadius: 1
-  displacementLimit: 0.005
   maxCylinderRadius: 0
-  radialSteps: 300
-  minStepResolution: 200
-  maxStepResolution: 400
+  displacementLimit: 0.001
+  depthFactor: 0.0465
+  radialSteps: 600
+  minStepResolution: 800
+  maxStepResolution: 1000
   weightDistribution:
     serializedVersion: 2
     key0: {r: 0, g: 0, b: 0, a: 1}
     key1: {r: 1, g: 1, b: 1, a: 1}
-    key2: {r: 1, g: 1, b: 1, a: 0}
+    key2: {r: 0, g: 0, b: 0, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 12529
-    ctime1: 15613
-    ctime2: 37008
+    ctime0: 14842
+    ctime1: 20624
+    ctime2: 65535
     ctime3: 65535
     ctime4: 65535
     ctime5: 0
@@ -46,7 +47,7 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_NumColorKeys: 4
+    m_NumColorKeys: 3
     m_NumAlphaKeys: 2
   maxResolution: 64
   signPassCount: 1
