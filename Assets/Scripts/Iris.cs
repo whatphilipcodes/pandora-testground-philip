@@ -53,8 +53,11 @@ public class Iris
         // CYCLE SETUP
         // Determine step of the current cycle
         currentStep = stepNo * step;
+
         // Determine gradient factor by sampling
-        currentGrad = SampleGradient(currentStep);
+        //currentGrad = SampleGradient(currentStep);
+        currentGrad = SampleCurve(currentStep);
+        
         // Determine cycles point budget
         pointBudget = GetPointsBudget(currentGrad);
         // Retrieve IDs of alive paths
@@ -72,10 +75,12 @@ public class Iris
         }
 
         // DEBUGGING information is collected and displayed
+        /*
         if (debug) Debug.Log(
             "CYCLE NO." + stepNo + "\n" +
             "currentStep = " + currentStep + "\n"
         );
+        */
 
         // COMPLETE CYCLE by calculationg next step number
         stepNo++;
@@ -91,6 +96,7 @@ public class Iris
     #endregion
 
     #region Internal Methods
+    /*
     private float SampleGradient(float radius)
     {
         float t = radius / irisData.totalRadius;
@@ -98,10 +104,18 @@ public class Iris
         Color.RGBToHSV(sampleGradient, out float h, out float s, out float v);
         return v;
     }
+    */
+
+    private float SampleCurve(float radius)
+    {
+        float t = radius / irisData.totalRadius;
+        float v = irisData.weightDistributionCurve.Evaluate(t);
+        return v;
+    }
 
     private int GetPointsBudget(float weight)
     {
-        int amount = Random.Range((int)(irisData.minStepResolution * weight),(int)((irisData.maxStepResolution + 1) * weight));
+        int amount = Random.Range((int)(irisData.minMaxStepResolution.x * weight), (int)((irisData.minMaxStepResolution.y + 1) * weight));
         // + 1 since when using Random.Range as int the upper range changes into an exclusive
         return amount;
     }
@@ -167,7 +181,6 @@ public class Iris
         public void AddPoint(float radius)
         {
             IRPoint point = CreateRandomPoint(radius);
-            Debug.Log("point: " + point.position + " | " + point.step);
             points.Add(point);
         }
 
@@ -201,7 +214,7 @@ public class Iris
         {
             for (int i = 0; i < points.Count - 1; i++)
             {
-                Debug.DrawLine(points[i].position, points[i + 1].position, Color.white);
+                Debug.DrawLine(points[i].position, points[i + 1].position, Color.magenta);
             }
         }
         #endregion
@@ -213,12 +226,21 @@ public class Iris
             pos.z = GetDepthCoord(radius);
             return new IRPoint (pos, radius);
         }
-        
+
+        /*
         private float GetDepthCoord (float radius)
         {
             float t = radius / irisData.totalRadius;
             Color sampleGradient = irisData.weightDistribution.Evaluate(t);
             Color.RGBToHSV(sampleGradient, out float h, out float s, out float v);
+            return v * irisData.depthFactor;
+        }
+        */
+
+        private float GetDepthCoord (float radius)
+        {
+            float t = radius / irisData.totalRadius;
+            float v = irisData.weightDistributionCurve.Evaluate(t);
             return v * irisData.depthFactor;
         }
         #endregion

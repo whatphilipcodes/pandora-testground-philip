@@ -15,40 +15,63 @@ MonoBehaviour:
   origin: {x: 0, y: 0, z: 0}
   totalRadius: 1
   maxCylinderRadius: 0
-  displacementLimit: 0.001
-  depthFactor: 0.0465
-  radialSteps: 600
-  minStepResolution: 800
-  maxStepResolution: 1000
-  weightDistribution:
+  displacementLimit: 0.004
+  depthFactor: 0.15
+  radialSteps: 20
+  minStepResolution: 80
+  maxStepResolution: 100
+  minMaxStepResolution: {x: 80, y: 100}
+  weightDistributionCurve:
     serializedVersion: 2
-    key0: {r: 0, g: 0, b: 0, a: 1}
-    key1: {r: 1, g: 1, b: 1, a: 1}
-    key2: {r: 0, g: 0, b: 0, a: 0}
-    key3: {r: 0, g: 0, b: 0, a: 0}
-    key4: {r: 0, g: 0, b: 0, a: 0}
-    key5: {r: 0, g: 0, b: 0, a: 0}
-    key6: {r: 0, g: 0, b: 0, a: 0}
-    key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 14842
-    ctime1: 20624
-    ctime2: 65535
-    ctime3: 65535
-    ctime4: 65535
-    ctime5: 0
-    ctime6: 0
-    ctime7: 0
-    atime0: 0
-    atime1: 65535
-    atime2: 0
-    atime3: 0
-    atime4: 0
-    atime5: 0
-    atime6: 0
-    atime7: 0
-    m_Mode: 0
-    m_NumColorKeys: 3
-    m_NumAlphaKeys: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.2
+      value: 0
+      inSlope: 0
+      outSlope: 13.760273
+      tangentMode: 1
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.1045531
+    - serializedVersion: 3
+      time: 0.4
+      value: 1
+      inSlope: -0.008052274
+      outSlope: -0.008052274
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.5837656
+    - serializedVersion: 3
+      time: 0.8488455
+      value: 0.60324347
+      inSlope: -2.4635303
+      outSlope: -2.4635303
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -0.024536574
+      outSlope: -0.024536574
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.16020238
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   maxResolution: 64
   signPassCount: 1
   center: {x: 0, y: 0, z: 0}
