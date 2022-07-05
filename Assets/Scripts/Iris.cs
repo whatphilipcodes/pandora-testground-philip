@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using PandoraUtils;
+using PathCreation;
 
 public class Iris
 {
     #region Properties
-    static IrisData irisData;
+    static Transform transform;
+    static Vector3 origin;
+    static IrisSettings irisSet;
     bool running, debug;
 
-    float step, currentStep, currentGrad;
+    float step, currentStep, currentWeight;
     int stepNo, pointBudget;
 
     List<IRPath> allPaths;
@@ -18,16 +21,18 @@ public class Iris
     #endregion
 
     #region Constructor
-    public Iris(IrisData _irisData, bool debugMode)
+    public Iris(IrisSettings _irisSettings, Transform _trans)
     {
-        irisData = _irisData;
-        debug = debugMode;
+        transform = _trans;
+        origin = transform.position;
+        irisSet = _irisSettings;
+        debug = irisSet.debug;
         running = true;
 
         stepNo = 0;
         currentStep = 0;
-        currentGrad = 0;
-        step = irisData.totalRadius / irisData.radialSteps;
+        currentWeight = 0;
+        step = irisSet.totalRadius / irisSet.radialSteps;
 
         allPaths = new List<IRPath>();
 
@@ -40,7 +45,7 @@ public class Iris
     public void Update()
     {
         // GUARD PATTERN to stop execution upon completion
-        if (stepNo == irisData.radialSteps)
+        if (stepNo == irisSet.radialSteps)
         {
             if (debug && running)
             {
@@ -56,10 +61,10 @@ public class Iris
 
         // Determine gradient factor by sampling
         //currentGrad = SampleGradient(currentStep);
-        currentGrad = SampleCurve(currentStep);
+        currentWeight = SampleCurve(currentStep);
         
         // Determine cycles point budget
-        pointBudget = GetPointsBudget(currentGrad);
+        pointBudget = GetPointsBudget(currentWeight);
         // Retrieve IDs of alive paths
         alivePaths = GetAlivePaths();
         // Calculate how many points to spawn / kill
@@ -71,19 +76,26 @@ public class Iris
         // EXTRUDE alive paths older than 1 cycle
         foreach (var id in alivePaths)
         {
-            allPaths[id].Extrude(irisData, step, currentStep);
+            allPaths[id].Extrude(irisSet, step, currentStep);
         }
-
-        // DEBUGGING information is collected and displayed
-        /*
-        if (debug) Debug.Log(
-            "CYCLE NO." + stepNo + "\n" +
-            "currentStep = " + currentStep + "\n"
-        );
-        */
 
         // COMPLETE CYCLE by calculationg next step number
         stepNo++;
+    }
+
+    // create a mesh from the current paths
+    public Mesh GenerateMesh()
+    {
+        // Mesh Data
+        List<Mesh> meshes = new List<Mesh>();
+
+        // add all vertices from all paths
+        foreach (var path in allPaths)
+        {
+            meshes.Add(path.GetMesh());
+        }
+
+        return MergeMeshes(meshes);
     }
 
     public void DebugDraw()
@@ -96,27 +108,16 @@ public class Iris
     #endregion
 
     #region Internal Methods
-    /*
-    private float SampleGradient(float radius)
-    {
-        float t = radius / irisData.totalRadius;
-        Color sampleGradient = irisData.weightDistribution.Evaluate(t);
-        Color.RGBToHSV(sampleGradient, out float h, out float s, out float v);
-        return v;
-    }
-    */
-
     private float SampleCurve(float radius)
     {
-        float t = radius / irisData.totalRadius;
-        float v = irisData.weightDistributionCurve.Evaluate(t);
+        float t = radius / irisSet.totalRadius;
+        float v = irisSet.weightDistributionCurve.Evaluate(t);
         return v;
     }
 
     private int GetPointsBudget(float weight)
     {
-        int amount = Random.Range((int)(irisData.minMaxStepResolution.x * weight), (int)((irisData.minMaxStepResolution.y + 1) * weight));
-        // + 1 since when using Random.Range as int the upper range changes into an exclusive
+        int amount = util.WeightedRandomInRange(weight, irisSet.minMaxStepResolution);
         return amount;
     }
 
@@ -142,7 +143,15 @@ public class Iris
         else if (diffToPrev < 0)
         {
             diffToPrev = -diffToPrev;
-            List<int> prey = util.RandomIDs(diffToPrev, alivePaths);
+
+            // Prevent paths with less than 3 points from being killed
+            List<int> selection = new List<int>();
+            foreach (var path in alivePaths)
+            {
+                if (allPaths[path].Count() >= 3) selection.Add(path);
+            }
+
+            List<int> prey = util.RandomIDs(diffToPrev, selection);
 
             foreach (var id in prey)
             {
@@ -157,6 +166,22 @@ public class Iris
                 allPaths.Add(new IRPath(currentStep));
             }
         }
+    }
+
+    // Merges a list of meshes into one mesh
+    private Mesh MergeMeshes (List<Mesh> meshes)
+    {
+        Mesh mesh = new Mesh();
+        CombineInstance[] combine = new CombineInstance[meshes.Count];
+
+        for (int i = 0; i < meshes.Count; i++)
+        {
+            combine[i].mesh = meshes[i];
+            //combine[i].transform = transform.localToWorldMatrix;
+        }
+
+        mesh.CombineMeshes(combine, true, false); // submeshes are merged (true) and transforms are ignored (false)
+        return mesh;
     }
     #endregion
 
@@ -184,13 +209,23 @@ public class Iris
             points.Add(point);
         }
 
-        public void Extrude(IrisData irisData, float step, float currentStep)
+        public Vector3[] GetPoints()
+        {
+            Vector3[] points = new Vector3[this.points.Count];
+            for (int i = 0; i < this.points.Count; i++)
+            {
+                points[i] = this.points[i].position;
+            }
+            return points;
+        }
+
+        public void Extrude(IrisSettings irisSettings, float step, float currentStep)
         {
             Vector3 position =  points[points.Count - 1].position;
-            Vector3 displacement = (position - irisData.origin).normalized * step;
-            displacement += util.RandomVector2D(irisData.displacementLimit);
+            Vector3 displacement = (position - origin).normalized * step;
+            displacement += util.RandomVector2D(irisSettings.displacementLimit);
             Vector3 result = position + displacement;
-            result.z = GetDepthCoord(currentStep);
+            result.z = SampleCurve(currentStep) * irisSettings.depthFactor;
             IRPoint point = new IRPoint ( result, currentStep );
             points.Add(point);
         }
@@ -217,45 +252,111 @@ public class Iris
                 Debug.DrawLine(points[i].position, points[i + 1].position, Color.magenta);
             }
         }
+
+        public int Count()
+        {
+            return points.Count;
+        }
+        
+        public Mesh GetMesh()
+        {
+            List<Vector3> vertices = new List<Vector3>();
+            List<int> triangles = new List<int>();
+
+            VertexPath vPath = GetVertexPath(this);
+
+            int pointsCount = this.Count();
+            float meshResStep = 1f / pointsCount;
+
+            float currentStep = 0f;
+            for (int i = 0; i < pointsCount + 1; i++) // + 1 to include last point
+            {
+                // Sample vertex path
+                Vector3 pos = vPath.GetPointAtTime(currentStep);
+                Quaternion rot = vPath.GetRotation(currentStep);
+
+                // Sample curve for radius
+                float t = Vector3.Distance(pos, origin);
+                float weight = SampleCurve(t);
+                float radius = util.WeightedRandomInRange(weight, irisSet.minMaxCylinderRadius);
+
+                // Add circle to vertices list
+                vertices.AddRange(util.ReturnCircle(pos, rot, radius, irisSet.cylinderResolution));
+                
+                // Increment mesh step
+                currentStep += meshResStep;
+            }
+
+            // Add triangles
+            for (int i = 0; i < pointsCount; i++)
+            {
+                triangles.AddRange(GetTubeTris(irisSet.cylinderResolution, i));
+            }
+            
+            for (int i = 0; i < vertices.Count - 1; i++)
+            {
+                Debug.DrawLine(vertices[i], vertices[i + 1], Color.cyan, 2000f);
+            }
+
+            Mesh mesh = new Mesh();
+            mesh.vertices = vertices.ToArray();
+            mesh.triangles = triangles.ToArray();
+
+            mesh.RecalculateNormals();
+            return mesh;
+        }
         #endregion
 
         #region Internal Methods
         private IRPoint CreateRandomPoint(float radius)
         {
             Vector3 pos = util.RandomCircleCoordinate(radius);
-            pos.z = GetDepthCoord(radius);
+            pos.z = SampleCurve(radius) * irisSet.depthFactor;
             return new IRPoint (pos, radius);
         }
 
-        /*
-        private float GetDepthCoord (float radius)
+        private float SampleCurve(float radius)
         {
-            float t = radius / irisData.totalRadius;
-            Color sampleGradient = irisData.weightDistribution.Evaluate(t);
-            Color.RGBToHSV(sampleGradient, out float h, out float s, out float v);
-            return v * irisData.depthFactor;
+           float t = radius / irisSet.totalRadius;
+           float v = irisSet.weightDistributionCurve.Evaluate(t);
+           return v;
         }
-        */
 
-        private float GetDepthCoord (float radius)
+        private VertexPath GetVertexPath(IRPath path)
         {
-            float t = radius / irisData.totalRadius;
-            float v = irisData.weightDistributionCurve.Evaluate(t);
-            return v * irisData.depthFactor;
+            BezierPath bPath = new BezierPath(path.GetPoints(), false);
+            return new VertexPath(bPath, transform);
+        }
+        private List<int> GetTubeTris(int resolution, int i)
+        {
+            List<int> tris = new List<int>();
+            int offset = i * resolution;
+            for (int j = 0; j < resolution - 1; j++)
+            {
+                tris.Add(offset + j);
+                tris.Add(offset + j + resolution);
+                tris.Add(offset + j + 1);
+
+                tris.Add(offset + j + 1);
+                tris.Add(offset + j + resolution);
+                tris.Add(offset + j + resolution + 1);
+            }
+            return tris;
         }
         #endregion
     }
 
     private struct IRPoint
     {
-        internal float step;
-        internal Vector3 position;
+        public float step;
+        public Vector3 position;
 
-        internal IRPoint (Vector3 _pos, float _step)
+        public IRPoint (Vector3 _pos, float _step)
         {
             this.position = _pos;
             this.step = _step;
         }
+
     }
     #endregion
 }

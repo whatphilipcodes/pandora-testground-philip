@@ -7,7 +7,7 @@ using UnityEngine.VFX.SDF;
 
 public class SDFBaker : MonoBehaviour
 {
-    public static RenderTexture ConvertToSDF (Mesh mesh, IrisData config)
+    public static RenderTexture ConvertToSDF (Mesh mesh, IrisSettings config)
     {
         MeshToSDFBaker meshBaker = new MeshToSDFBaker
         (

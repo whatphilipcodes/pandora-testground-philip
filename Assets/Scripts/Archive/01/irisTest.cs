@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using PandoraUtils;
+
 public class irisTest : MonoBehaviour
 {
     // data input
@@ -42,18 +44,7 @@ public class irisTest : MonoBehaviour
     }
 
     // Custom Functions
-    List<Vector3> ReturnCircle(Vector3 position, float radius, int resolution)
-    {
-        List<Vector3> circle = new List<Vector3>();
-        float angle = 0;
-        float step = 2 * Mathf.PI / resolution;
-        for (int i = 0; i < resolution; i++)
-        {
-            circle.Add(new Vector3(position.x + radius * Mathf.Cos(angle), position.y + radius * Mathf.Sin(angle), position.z));
-            angle += step;
-        }
-        return circle;
-    }
+    
 
     Mesh TubeSegment(Vector3 start, Vector3 end)
     {
@@ -61,8 +52,10 @@ public class irisTest : MonoBehaviour
         List<Vector3> vertices = new List<Vector3>();
         List<int> triangles = new List<int>();
         
-        vertices.AddRange(ReturnCircle(start, iris_data.tube_radius, iris_data.tube_resolution));
-        vertices.AddRange(ReturnCircle(end, iris_data.tube_radius, iris_data.tube_resolution));
+        /*
+        vertices.AddRange(util.ReturnCircle(start, iris_data.tube_radius, iris_data.tube_resolution));
+        vertices.AddRange(util.ReturnCircle(end, iris_data.tube_radius, iris_data.tube_resolution));
+        */
 
         triangles = TubeSegmentTriangles(iris_data.tube_resolution);
 

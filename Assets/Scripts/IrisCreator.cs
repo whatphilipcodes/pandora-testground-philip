@@ -2,43 +2,38 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-using PathCreation;
-using PandoraUtils;
-
 public class IrisCreator : MonoBehaviour
 {
-    public IrisData irisData;
-    public bool debug;
+    public IrisSettings irisSet;
 
     [HideInInspector]
     Iris iris;
+    Mesh mesh;
+    MeshFilter meshFilter;
 
 
     // Start is called before the first frame update
     void Start()
     {
         // Create Iris
-        iris = new Iris(irisData, debug);
+        iris = new Iris(irisSet, gameObject.transform);
 
-        // Debugging
-        if (!debug) return;
+        // Setup Mesh
+        meshFilter = GetComponent<MeshFilter>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Manage Iris
+        // Update Iris
         iris.Update();
-
-        // Debugging
-        if (!debug) return;
         iris.DebugDraw();
-    }
 
-    VertexPath ReturnSmooth(Vector3[] points)
-    {
-        BezierPath bezierPath = new BezierPath(points, false, PathSpace.xyz);
-        Transform transform = new GameObject().transform;
-        return new VertexPath(bezierPath, transform);
+        // Check for input
+        if (Input.GetKeyDown("space"))
+        {
+            mesh = iris.GenerateMesh();
+            meshFilter.mesh = mesh;
+        }
     }
 }

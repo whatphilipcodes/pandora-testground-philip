@@ -10,17 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ae34528f5c8f141feb294936743e1241, type: 3}
-  m_Name: IrisData
+  m_Name: IrisSet_High
   m_EditorClassIdentifier: 
-  origin: {x: 0, y: 0, z: 0}
   totalRadius: 1
-  maxCylinderRadius: 0
-  displacementLimit: 0.004
+  displacementLimit: 0.00158
   depthFactor: 0.15
-  radialSteps: 20
-  minStepResolution: 80
-  maxStepResolution: 100
-  minMaxStepResolution: {x: 80, y: 100}
+  minMaxStepResolution: {x: 440, y: 500}
+  radialSteps: 300
   weightDistributionCurve:
     serializedVersion: 2
     m_Curve:
@@ -72,9 +68,12 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  debug: 1
+  minMaxCylinderRadius: {x: 0.01, y: 0.049999997}
+  cylinderResolution: 5
+  RadialMeshResolution: 10
   maxResolution: 64
   signPassCount: 1
   center: {x: 0, y: 0, z: 0}
   sizeBox: {x: 0, y: 0, z: 0}
   threshold: 0.5
-  SDF: {fileID: 0}
