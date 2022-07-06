@@ -288,10 +288,10 @@ public class Iris
             }
 
             // Add triangles
-            for (int i = 0; i < pointsCount; i++)
-            {
-                triangles.AddRange(GetTubeTris(irisSet.cylinderResolution, i));
-            }
+            triangles.AddRange(GetTubeTris(irisSet.cylinderResolution, pointsCount)); // tubes
+            triangles.InsertRange(0, GetCap(irisSet.cylinderResolution, 0)); // insert startcap at the beginning
+            triangles.Reverse(); // flip normals
+            triangles.AddRange(GetCap(irisSet.cylinderResolution, vertices.Count - irisSet.cylinderResolution)); // add endcap
             
             for (int i = 0; i < vertices.Count - 1; i++)
             {
@@ -327,19 +327,80 @@ public class Iris
             BezierPath bPath = new BezierPath(path.GetPoints(), false);
             return new VertexPath(bPath, transform);
         }
-        private List<int> GetTubeTris(int resolution, int i)
+        private List<int> GetTubeTris(int resolution, int pathLength)
         {
             List<int> tris = new List<int>();
-            int offset = i * resolution;
-            for (int j = 0; j < resolution - 1; j++)
-            {
-                tris.Add(offset + j);
-                tris.Add(offset + j + resolution);
-                tris.Add(offset + j + 1);
+            for (int i = 0; i < pathLength; i++) // upper level: tube segments
+            {   
+                int offset = i * resolution;
+                int firstV = 0;
+                int secondV = 0;
+                for (int j = 0; j < resolution; j++) // lower level: quads
+                {
+                    if (j == 0)
+                    {
+                        firstV = offset;
+                        secondV = offset + resolution;
+                    }
 
-                tris.Add(offset + j + 1);
-                tris.Add(offset + j + resolution);
-                tris.Add(offset + j + resolution + 1);
+                    if (j != resolution - 1)
+                    {
+                        tris.Add(offset + j);
+                        tris.Add(offset + j + resolution);
+                        tris.Add(offset + j + 1);
+
+                        tris.Add(offset + j + 1);
+                        tris.Add(offset + j + resolution);
+                        tris.Add(offset + j + resolution + 1);
+                    }else
+                    {
+                        tris.Add(offset + j);
+                        tris.Add(offset + j + resolution);
+                        tris.Add(firstV);
+
+                        tris.Add(firstV);
+                        tris.Add(offset + j + resolution);
+                        tris.Add(secondV);
+                    }
+                }
+            }
+            return tris;
+        }
+
+        private List<int> GetCap(int resolution, int offset)
+        {
+            //Debug.Log("resolution: " + resolution);
+            List<int> tris = new List<int>();
+            for (int i = 0, j = 0; i < resolution; i++)
+            {
+                tris.Add(offset + ((resolution - j) % resolution));
+                //Debug.Log(offset + ((resolution - j) % resolution));
+                tris.Add(offset + (i + 1));
+                //Debug.Log(offset + (i + 1));
+                tris.Add(offset + (resolution - 1 - i));
+                //Debug.Log(offset + (resolution - 1 - i));
+
+                j++;
+                //Debug.Log("i: " + i + " j: " + j);
+                if (tris.Count == (resolution - 2) * 3)
+                {
+                    //Debug.Log("first break");
+                    break;
+                }
+
+                tris.Add(offset + ((resolution - j) % resolution));
+                //Debug.Log(offset + ((resolution - j) % resolution));
+                tris.Add(offset + (i + 1));
+                //Debug.Log(offset + (i + 1));
+                tris.Add(offset + (i + 2));
+                //Debug.Log(offset + (i + 2));
+
+                //Debug.Log("i: " + i + " j: " + j);
+                if (tris.Count == (resolution - 2) * 3)
+                {
+                    //Debug.Log("second break");
+                    break;
+                }
             }
             return tris;
         }

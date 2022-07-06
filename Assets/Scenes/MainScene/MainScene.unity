@@ -992,7 +992,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcd9c78814bf745a6899141a79f50d2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  irisSet: {fileID: 11400000, guid: 622deaf3e25dc4e589e7789675e6e409, type: 2}
+  irisSet: {fileID: 11400000, guid: 4a402e832ba4d46428413c1de42b7965, type: 2}
 --- !u!33 &2015315375
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1008,7 +1008,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2015315372}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
