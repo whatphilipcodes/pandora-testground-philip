@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ae34528f5c8f141feb294936743e1241, type: 3}
-  m_Name: IrisSet_High
+  m_Name: IrisSet_Low_Alt
   m_EditorClassIdentifier: 
   totalRadius: 1
-  displacementLimit: 0.00355
+  displacementLimit: 0.01
   depthFactor: 0.15
-  minMaxStepResolution: {x: 440, y: 500}
-  radialSteps: 300
+  minMaxStepResolution: {x: 180, y: 200}
+  radialSteps: 90
   weightDistributionCurve:
     serializedVersion: 2
     m_Curve:
@@ -69,8 +69,8 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   debug: 1
-  minMaxCylinderRadius: {x: 0.0045, y: 0.006126153}
-  cylinderResolution: 3
+  minMaxCylinderRadius: {x: 0.0043, y: 0.005643082}
+  cylinderResolution: 5
   maxResolution: 64
   signPassCount: 1
   center: {x: 0, y: 0, z: 0}

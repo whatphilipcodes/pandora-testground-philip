@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: IrisSet_Mesh
   m_EditorClassIdentifier: 
   totalRadius: 1
-  displacementLimit: 0.01
+  displacementLimit: 0.00429
   depthFactor: 0.15
-  minMaxStepResolution: {x: 60, y: 120}
-  radialSteps: 90
+  minMaxStepResolution: {x: 120, y: 180}
+  radialSteps: 150
   weightDistributionCurve:
     serializedVersion: 2
     m_Curve:
@@ -69,9 +69,8 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   debug: 1
-  minMaxCylinderRadius: {x: 0.01, y: 0.01}
-  cylinderResolution: 5
-  RadialMeshResolution: 10
+  minMaxCylinderRadius: {x: 0.0054, y: 0.0054}
+  cylinderResolution: 3
   maxResolution: 64
   signPassCount: 1
   center: {x: 0, y: 0, z: 0}

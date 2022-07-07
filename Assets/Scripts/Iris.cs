@@ -172,6 +172,7 @@ public class Iris
     private Mesh MergeMeshes (List<Mesh> meshes)
     {
         Mesh mesh = new Mesh();
+        mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         CombineInstance[] combine = new CombineInstance[meshes.Count];
 
         for (int i = 0; i < meshes.Count; i++)
@@ -266,11 +267,14 @@ public class Iris
             VertexPath vPath = GetVertexPath(this);
 
             int pointsCount = this.Count();
-            float meshResStep = 1f / pointsCount;
+            float meshResStep = 1f / (pointsCount + 1);
 
             float currentStep = 0f;
+
             for (int i = 0; i < pointsCount + 1; i++) // + 1 to include last point
             {
+                Debug.Log("currentStep: " + currentStep);
+
                 // Sample vertex path
                 Vector3 pos = vPath.GetPointAtTime(currentStep);
                 Quaternion rot = vPath.GetRotation(currentStep);

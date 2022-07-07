@@ -897,7 +897,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   folder: /Users/philip/desktop
-  resolutionFactor: 1
+  resolutionFactor: 2
 --- !u!1 &2013410473
 GameObject:
   m_ObjectHideFlags: 1
@@ -992,7 +992,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcd9c78814bf745a6899141a79f50d2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  irisSet: {fileID: 11400000, guid: 4a402e832ba4d46428413c1de42b7965, type: 2}
+  irisSet: {fileID: 11400000, guid: 653c112353c4a4d0db3e26701f1fd82c, type: 2}
 --- !u!33 &2015315375
 MeshFilter:
   m_ObjectHideFlags: 0

@@ -20,9 +20,8 @@ public class IrisSettings : ScriptableObject
     [Space(10)]
 
     [Header("Mesh Settings")]
-    [MinMaxSlider(0.001f,0.1f)] public Vector2 minMaxCylinderRadius;
+    [MinMaxSlider(0.0001f,0.1f)] public Vector2 minMaxCylinderRadius;
     [Range(3,16)] public int cylinderResolution;
-    [Range(4,100)] public int RadialMeshResolution;
 
     // SDF Settings (not visible, only default stuff)
     [HideInInspector] public int maxResolution = 64, signPassCount = 1;
