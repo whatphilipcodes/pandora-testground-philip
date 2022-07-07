@@ -12,7 +12,7 @@ public class IrisSettings : ScriptableObject
     public float totalRadius;
     [Range(0f,0.01f)] public float displacementLimit;
     [Range(0f,0.2f)] public float depthFactor;
-    [MinMaxSlider(0f,500f)] public Vector2Int minMaxStepResolution;
+    [MinMaxSlider(0f,800f)] public Vector2Int minMaxStepResolution;
     public int radialSteps;
     public AnimationCurve weightDistributionCurve;
     public bool debug;

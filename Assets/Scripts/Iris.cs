@@ -92,7 +92,8 @@ public class Iris
         // add all vertices from all paths
         foreach (var path in allPaths)
         {
-            meshes.Add(path.GetMesh());
+            Mesh current = path.GetMesh();
+            if (current != null) meshes.Add(current);
         }
 
         return MergeMeshes(meshes);
@@ -104,6 +105,11 @@ public class Iris
         {
             path.DebugDraw();
         }
+    }
+
+    public bool IsRunning()
+    {
+        return running;
     }
     #endregion
 
@@ -261,6 +267,8 @@ public class Iris
         
         public Mesh GetMesh()
         {
+            if (this.points.Count < 2) return null;
+
             List<Vector3> vertices = new List<Vector3>();
             List<int> triangles = new List<int>();
 
@@ -273,7 +281,7 @@ public class Iris
 
             for (int i = 0; i < pointsCount + 1; i++) // + 1 to include last point
             {
-                Debug.Log("currentStep: " + currentStep);
+                //Debug.Log("currentStep: " + currentStep);
 
                 // Sample vertex path
                 Vector3 pos = vPath.GetPointAtTime(currentStep);
@@ -297,10 +305,12 @@ public class Iris
             triangles.Reverse(); // flip normals
             triangles.AddRange(GetCap(irisSet.cylinderResolution, vertices.Count - irisSet.cylinderResolution)); // add endcap
             
+            /*
             for (int i = 0; i < vertices.Count - 1; i++)
             {
                 Debug.DrawLine(vertices[i], vertices[i + 1], Color.cyan, 2000f);
             }
+            */
 
             Mesh mesh = new Mesh();
             mesh.vertices = vertices.ToArray();
@@ -309,6 +319,7 @@ public class Iris
             mesh.RecalculateNormals();
             return mesh;
         }
+        
         #endregion
 
         #region Internal Methods

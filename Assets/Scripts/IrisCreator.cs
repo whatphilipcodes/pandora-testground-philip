@@ -5,11 +5,11 @@ using UnityEngine;
 public class IrisCreator : MonoBehaviour
 {
     public IrisSettings irisSet;
+    public MeshCarrier meshCar;
 
     [HideInInspector]
     Iris iris;
-    Mesh mesh;
-    MeshFilter meshFilter;
+    
 
 
     // Start is called before the first frame update
@@ -18,8 +18,6 @@ public class IrisCreator : MonoBehaviour
         // Create Iris
         iris = new Iris(irisSet, gameObject.transform);
 
-        // Setup Mesh
-        meshFilter = GetComponent<MeshFilter>();
     }
 
     // Update is called once per frame
@@ -27,13 +25,13 @@ public class IrisCreator : MonoBehaviour
     {
         // Update Iris
         iris.Update();
-        iris.DebugDraw();
-
+        if (!meshCar.mesh) iris.DebugDraw();
+        
         // Check for input
-        if (Input.GetKeyDown("space"))
+        if (meshCar.mesh == null && !iris.IsRunning())
         {
-            mesh = iris.GenerateMesh();
-            meshFilter.mesh = mesh;
+            meshCar.mesh = iris.GenerateMesh();
         }
+        
     }
 }
