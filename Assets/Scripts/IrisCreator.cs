@@ -32,6 +32,11 @@ public class IrisCreator : MonoBehaviour
         {
             meshCar.mesh = iris.GenerateMesh();
         }
-        
+
+        if (Input.GetKeyDown(KeyCode.Space) && !iris.IsRunning())
+        {
+            meshCar.mesh = null;
+            iris = new Iris(irisSet, gameObject.transform);
+        }
     }
 }

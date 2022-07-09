@@ -8,21 +8,22 @@ public class VFXManager : MonoBehaviour
 {
     [SerializeField] VisualEffect vfx;
     [SerializeField] MeshCarrier meshCar;
-    
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    bool newMesh;
 
-    // Update is called once per frame
-    void Update()
+    void Setup()
     {
         if (!vfx || !meshCar) throw new System.Exception("VFXManager is missing references");
+    }
 
-        if (meshCar.mesh != null)
+    void Update()
+    {
+        if (meshCar.mesh == null) newMesh = true;
+        if (!newMesh) return;
+
+        if (meshCar.mesh != null && meshCar.mesh != vfx.GetMesh("inputMesh"))
         {
             vfx.SetMesh("inputMesh", meshCar.mesh);
+            newMesh = false;
         }
     }
 }
