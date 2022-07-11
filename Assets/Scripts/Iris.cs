@@ -117,7 +117,7 @@ public class Iris
     private float SampleCurve(float radius)
     {
         float t = radius / irisSet.totalRadius;
-        float v = irisSet.weightDistributionCurve.Evaluate(t);
+        float v = Mathf.Clamp(irisSet.weightDistributionCurve.Evaluate(t), 0, 1);
         return v;
     }
 
@@ -333,7 +333,7 @@ public class Iris
         private float SampleCurve(float radius)
         {
            float t = radius / irisSet.totalRadius;
-           float v = irisSet.weightDistributionCurve.Evaluate(t);
+           float v = Mathf.Clamp(irisSet.weightDistributionCurve.Evaluate(t), 0, 1);
            return v;
         }
 

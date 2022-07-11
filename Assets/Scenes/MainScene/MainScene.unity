@@ -539,7 +539,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!73398921 &831693117
 VFXRenderer:
   serializedVersion: 1
@@ -548,7 +548,7 @@ VFXRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 831693116}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -670,7 +670,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!23 &1002797512
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1218,7 +1218,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcd9c78814bf745a6899141a79f50d2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  irisSet: {fileID: 11400000, guid: 653c112353c4a4d0db3e26701f1fd82c, type: 2}
+  irisSet: {fileID: 11400000, guid: b1de8455587ee432aaf834251974e1b7, type: 2}
   meshCar: {fileID: 11400000, guid: e942f53dc37384f9aa4dce8f7f8e23ca, type: 2}
 --- !u!1 &2134295925
 GameObject:
